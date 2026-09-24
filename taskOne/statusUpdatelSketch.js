@@ -6,7 +6,7 @@
 const PROXY_URL = "https://seneye-proxy.ezankov.workers.dev/";
 
 // Toggle to true if you are working offline without network access
-const USE_OFFLINE_MOCK = true;
+const USE_OFFLINE_MOCK = false;
 
 let aquariumData = null;
 let lastUpdated = "";
@@ -56,14 +56,27 @@ function draw() {
   if (aquariumData) {
     // NOTE: Update these keys based on your actual Seneye JSON response structure!
     // Example fields commonly found in sensor data:
-    let temp = aquariumData.temperature || 24.5;
-    let ph = aquariumData.ph || 7.2;
-    let nh3 = aquariumData.nh3 || 0.01;
+    let temp = aquariumData[0].exps.temperature.curr;
+    let ph = aquariumData[0].exps.ph.curr;
+    let nh3 = aquariumData[0].exps.nh3.curr;
+    let phStatus = 0;//aquariumData[0].exps.ph.status;
 
     // Call your custom graphic widgets
     drawTempWidget(50, 120, temp);
     drawGaugeWidget(300, 120, "pH Level", ph, 6.0, 8.5);
     drawGaugeWidget(550, 120, "Ammonia (NH3)", nh3, 0.0, 0.05);
+
+    if (Number(phStatus) === 1) {
+      fill(255, 100, 100);
+      textSize(14);
+      text("Warning: Check pH level", 315, 225);
+    }
+    else{
+      fill(255, 100, 100);
+      textSize(14);
+      text("pH level is normal", 315, 225);
+
+    }
 
   } else {
     // Loading State
